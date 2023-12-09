@@ -1,4 +1,4 @@
-# Interleave treeIP-Lookup
+# Intervaltree IP-Lookup
 This Program Will work as a web service. Firstly, run sh install_dependencies.sh file to install all needed libraries. Then run IP-Lookup.py -p <webservice_port>.
 
 # Functionality
