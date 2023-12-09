@@ -1,5 +1,5 @@
 # IP-Lookup
-This Program Will work as web service. Just run install_dependencies.sh file to install every python libraries. Then run IP-Lookup.py -p <webservice_port>.
+This Program Will work as a web service. Firstly, run sh install_dependencies.sh file to install all needed libraries. Then run IP-Lookup.py -p <webservice_port>.
 
 # Functionality
 The program will download the latest IP/AS database from a free repository: https://raw.githubusercontent.com/sapics/ip-location-db/main/asn. Then generates a Interval tree to run fast lookup function. Lookup time is about 1 ms for 385k IPprefix.
