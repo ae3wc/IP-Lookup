@@ -14,7 +14,7 @@ the output is a json tuple and send back IP, AS Number, and AS Name.
 You can run the program as a service, or by directly running python3 IP-lookup -p <webservice_port, default is 8080>
 
 # Libraries
-intervaltree==3.1.0\n
+intervaltree==3.1.0
 Flask==2.0.1
 requests==2.26.0
 Database: https://github.com/sapics/ip-location-db
