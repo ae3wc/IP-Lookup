@@ -17,4 +17,4 @@ You can run the program as a service, or by directly running python3 IP-lookup -
 intervaltree==3.1.0
 Flask==2.0.1
 requests==2.26.0
-Database: https://github.com/sapics/ip-location-db
+Database: https://github.com/sapics/ip-location-db, https://raw.githubusercontent.com/sapics/ip-location-db/main/iptoasn-country/iptoasn-country-ipv4.csv
