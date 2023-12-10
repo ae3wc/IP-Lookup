@@ -8,7 +8,7 @@ The program will download the latest IP/AS database from a free repository: Sapi
 You can Call IPlookup webservice via http://<Host-name>:8080/IPlookup/ip=x.x.x.x that x.x.x.x is requested ip. Http method is Get.
 
 # Output
-the output is a json tuple and send back IP, AS Number, and AS Name.
+The output is a json tuple and send back Country, IP, AS Number, and AS Name.
 
 # run as service
 You can run the program as a service, or by directly running python3 IP-lookup -p <webservice_port, default is 8080>
