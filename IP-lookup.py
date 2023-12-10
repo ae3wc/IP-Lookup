@@ -18,7 +18,7 @@ def ip_to_int(ip):
     return int(ipaddress.IPv4Address(ip))
 
 
-def populate_interval_tree(file_path):
+def populate_interval_tree_IPas(file_path):
     interval_tree = IntervalTree()
     i=0
     start=time.time()
@@ -42,6 +42,39 @@ def populate_interval_tree(file_path):
 
     return interval_tree
 
+def parse_linecountry(line):
+    parts = line.split(',')
+    if len(parts) == 3:
+        start_ip, end_ip, country = parts[0].strip(), parts[1].strip(), parts[2].strip()
+        print(f'{start_ip}, {end_ip}, {country}')
+        return start_ip, end_ip, country
+    else:
+        return None
+
+def populate_interval_tree_IPCountry(file_path):
+    interval_tree = IntervalTree()
+    i=0
+    start=time.time()
+    with open(file_path, 'r') as file:
+        for line in file:
+            parsed_line = parse_linecountry(line)
+            if parsed_line:
+                start_ip, end_ip, countrycode = parsed_line
+                start_ip_int, end_ip_int = ip_to_int(start_ip), ip_to_int(end_ip)
+
+                if start_ip_int == end_ip_int:
+                    # Handle single IP case
+                    interval_tree[start_ip_int:start_ip_int + 1] = (countrycode)
+                else:
+                    # Handle range case
+                    interval_tree[start_ip_int:end_ip_int] = (countrycode)
+            i+=1
+    end=time.time()
+    gentime=end-start
+    print(f'Number of added IPCountry prefix is: {i}, and time to generate is: {gentime} s')
+
+    return interval_tree
+
 
 def find_isp(ip, interval_tree):
     ip_obj = ipaddress.ip_address(ip)
@@ -53,7 +86,7 @@ def find_isp(ip, interval_tree):
 
     return "Not found"
 
-def download_file():
+def download_file_IPAS():
     url = 'https://raw.githubusercontent.com/sapics/ip-location-db/main/asn/asn-ipv4.csv'
     local_filename = 'asn-ipv4.csv'
     response = requests.get(url, stream=True)
@@ -61,14 +94,33 @@ def download_file():
         for chunk in response.iter_content(chunk_size=128):
             file.write(chunk)
 
+def download_file_IPCountry():
+    url = 'https://raw.githubusercontent.com/sapics/ip-location-db/main/iptoasn-country/iptoasn-country-ipv4.csv'
+    local_filename = 'iptoasn-country-ipv4.csv'
+    response = requests.get(url, stream=True)
+    with open(local_filename, 'wb') as file:
+        for chunk in response.iter_content(chunk_size=128):
+            file.write(chunk)
+
+def find_country(ip, interval_tree):
+    ip_obj = ipaddress.ip_address(ip)
+    ip_int = ip_to_int(ip_obj)
+    overlapping_intervals = interval_tree[ip_int]
+
+    for interval in overlapping_intervals:
+        return interval.data
 
 
 
 # Example usage
-download_file()
-print(f'File downloaded!')
-interval_tree = populate_interval_tree(r'asn-ipv4.csv')
-
+download_file_IPAS()
+print(f'File IPtoAS downloaded!')
+download_file_IPCountry()
+print(f'File IPtoCountry downloaded!')
+interval_tree = populate_interval_tree_IPas(r'asn-ipv4.csv')
+print(f'InvervalTree IPtoAS created!')
+interval_treeIPCountry = populate_interval_tree_IPCountry(r'iptoasn-country-ipv4.csv')
+print(f'InteralTree IPtocountry created!')
 app = Flask(__name__)
 @app.route('/IPlookup', methods=['GET'])
 def IPlookup():
@@ -80,10 +132,12 @@ def IPlookup():
         if not ip_address:
             raise ValueError("IP address is required")
         result_as_number, result_isp = find_isp(ip_address, interval_tree)
+        country= find_country(ip_address,interval_treeIPCountry)
         result= {
             'ip': ip_address,
             'as_number': result_as_number,
-            'as_name': result_isp
+            'as_name': result_isp,
+            'Country' : country
         }
 
         # Return the result in JSON format
